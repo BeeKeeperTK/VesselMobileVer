@@ -1,133 +1,282 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | Vessel</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-logo-title-footer"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">Vessel</div>
-      </div>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0d0d0d">
+  <title>Vessel | Mobile WebGL Build</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d0d0d;
+      --panel: #171717;
+      --text: #e8e8e8;
+      --muted: #aaaaaa;
+      --accent: #f2b35d;
+      --border: #343434;
+      --error: #9b2020;
+      --warning: #8a6518;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, "Noto Sans KR", sans-serif;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .page {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      padding: 22px 14px calc(32px + env(safe-area-inset-bottom));
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 10vw, 3.25rem);
+      letter-spacing: 0.06em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .platform-notice {
+      max-width: 760px;
+      margin: 16px auto 20px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .platform-notice strong,
+    .content h2,
+    .controls td {
+      color: var(--accent);
+    }
+
+    .platform-notice a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .game-shell {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #000;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    #unity-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      outline: none;
+    }
+
+    #unity-loading-bar {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(360px, 75%);
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    #unity-progress-bar-empty {
+      width: 100%;
+      height: 16px;
+      overflow: hidden;
+      border: 1px solid #888;
+      background: #252525;
+    }
+
+    #unity-progress-bar-full {
+      width: 0;
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.1s linear;
+    }
+
+    #unity-warning {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      left: 12px;
+      z-index: 2;
+    }
+
+    .content {
+      margin-top: 22px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      line-height: 1.65;
+    }
+
+    .content h2 {
+      margin: 0 0 12px;
+    }
+
+    .controls {
+      width: 100%;
+      margin: 14px 0 20px;
+      border-collapse: collapse;
+    }
+
+    .controls th,
+    .controls td {
+      padding: 10px;
+      border: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .controls th {
+      width: 48%;
+      background: #202020;
+      color: var(--text);
+    }
+
+    .footer-note {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 16px 10px calc(26px + env(safe-area-inset-bottom));
+      }
+
+      .content {
+        padding: 16px;
+      }
+
+      .controls th {
+        width: 44%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <h1>VESSEL</h1>
+      <p class="subtitle">2D Top-Down Action Prototype — Mobile Version</p>
+    </header>
+
+    <div class="platform-notice">
+      <strong>Mobile version</strong> — Use the on-screen joystick and action buttons.<br>
+      For the best experience, play in landscape orientation.<br>
+      <a href="https://REPLACE-WITH-YOUR-DESKTOP-BUILD-URL">Open the desktop version →</a>
     </div>
-    <script>
-      var canvas = document.querySelector("#unity-canvas");
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#unity-warning");
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
+    <section class="game-shell" aria-label="Vessel mobile WebGL game">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <p>Loading Vessel…</p>
+        <div id="unity-progress-bar-empty"><div id="unity-progress-bar-full"></div></div>
+      </div>
+      <div id="unity-warning"></div>
+    </section>
+
+    <section class="content">
+      <h2>Mobile Controls / 모바일 조작법</h2>
+      <table class="controls">
+        <tbody>
+          <tr><th>Move (이동)</th><td>Use the on-screen joystick</td></tr>
+          <tr><th>Attack / Fire (공격 / 발사)</th><td>Tap the attack button</td></tr>
+          <tr><th>Dodge (구르기 회피)</th><td>Tap the dodge button</td></tr>
+          <tr><th>Liberate Card (제단 상호작용)</th><td>Tap the on-screen interaction button</td></tr>
+          <tr><th>Drop Weapon (무기 버리기)</th><td>Tap the on-screen weapon action button</td></tr>
+          <tr><th>Swap Weapon / Replenish Arrows (무기 교체 / 화살 보충)</th><td>Tap the on-screen weapon action button</td></tr>
+          <tr><th>Pause Menu (일시정지)</th><td>Tap the pause button</td></tr>
+        </tbody>
+      </table>
+
+      <p><strong>Vessel</strong> 은 고대 유적 지하에서 깨어난 빈 인간 육체 <strong>'Deck'</strong> 이 되어, 던전에 봉인된 자아를 가진 무기 카드들을 구출하고 실시간으로 무기를 교체하며 싸워나가는 2D 탑다운 액션 프로토타입입니다.</p>
+      <p class="footer-note">This page hosts the touch-oriented mobile WebGL build. Bow ammo appears in the HUD while the Bow is equipped.</p>
+    </section>
+  </main>
+
+  <script>
+    const buildUrl = "Build";
+    const loaderUrl = buildUrl + "/Vessel_WebuildMobileV1.0.loader.js";
+
+    const canvas = document.querySelector("#unity-canvas");
+    const loadingBar = document.querySelector("#unity-loading-bar");
+    const progressBarFull = document.querySelector("#unity-progress-bar-full");
+    const warningBanner = document.querySelector("#unity-warning");
+
+    function unityShowBanner(message, type) {
+      const div = document.createElement("div");
+      div.textContent = message;
+      div.style.cssText = "padding:10px;margin-bottom:8px;border-radius:4px;color:#fff;background:" +
+        (type === "error" ? "#9b2020" : "#8a6518") + ";";
+      warningBanner.appendChild(div);
+      if (type !== "error") {
+        setTimeout(() => div.remove(), 5000);
       }
+    }
 
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Vessel_WebuildV2.0.loader.js";
-      var config = {
-        arguments: [],
-        dataUrl: buildUrl + "/Vessel_WebuildV2.0.data",
-        frameworkUrl: buildUrl + "/Vessel_WebuildV2.0.framework.js",
-        codeUrl: buildUrl + "/Vessel_WebuildV2.0.wasm",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Embertkin",
-        productName: "Vessel",
-        productVersion: "2.0",
-        showBanner: unityShowBanner,
-        // errorHandler: function(err, url, line) {
-        //    alert("error " + err + " occurred at line " + line);
-        //    // Return 'true' if you handled this error and don't want Unity
-        //    // to process it further, 'false' otherwise.
-        //    return true;
-        // },
-      };
+    const config = {
+      arguments: [],
+      dataUrl: buildUrl + "/Vessel_WebuildMobileV1.0.data",
+      frameworkUrl: buildUrl + "/Vessel_WebuildMobileV1.0.framework.js",
+      codeUrl: buildUrl + "/Vessel_WebuildMobileV1.0.wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "Embertkin",
+      productName: "Vessel",
+      productVersion: "Mobile V1.0",
+      showBanner: unityShowBanner,
+      devicePixelRatio: 1
+    };
 
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
-
-      // If you would like all file writes inside Unity Application.persistentDataPath
-      // directory to automatically persist so that the contents are remembered when
-      // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
-      // This autosyncing is currently not the default behavior to avoid regressing
-      // existing user projects that might rely on the earlier manual
-      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-      // expected to change.
-
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        document.querySelector("#unity-container").className = "unity-mobile";
-        canvas.className = "unity-mobile";
-
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
-
-
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
-      }
-
-      document.querySelector("#unity-loading-bar").style.display = "block";
-
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
-
-              }).catch((message) => {
-                alert(message);
-              });
-            };
-
-      document.body.appendChild(script);
-
-    </script>
-  </body>
+    const script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        progressBarFull.style.width = (100 * progress) + "%";
+      }).then(() => {
+        loadingBar.style.display = "none";
+      }).catch((message) => {
+        unityShowBanner(message, "error");
+      });
+    };
+    script.onerror = () => {
+      unityShowBanner("The mobile build loader could not be found. Check the Build folder name and loader filename.", "error");
+    };
+    document.body.appendChild(script);
+  </script>
+</body>
 </html>
