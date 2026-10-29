@@ -2,20 +2,45 @@
 <html lang="en-us">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity Web Player | Vessel</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
   <script src="TemplateData/profiler.js"></script>
-  <style>
-#html-game-launcher{position:fixed;left:12px;bottom:12px;z-index:10000;color:#fff;font:14px/1.5 Arial,sans-serif;max-width:calc(100vw - 24px)}
-#html-game-launcher summary{cursor:pointer;padding:10px 14px;background:#202632;border:1px solid #667085;border-radius:8px}
-#html-game-launcher nav{padding:12px;background:#171c26;border:1px solid #667085;border-radius:8px;max-height:60vh;overflow:auto}
-#html-game-launcher[open]{display:flex;flex-direction:column-reverse;gap:8px}
-#html-game-launcher a{display:block;color:#fff;background:#29364e;padding:10px 14px;margin:6px 0;border-radius:6px;text-decoration:none}
-#html-game-launcher a:hover{background:#374b6b}
-</style></head>
+
+    <!-- HTML game launcher; original Unity loading script preserved. -->
+    <style>
+      body { margin:0; background:#10141d; }
+      #html-game-launcher { box-sizing:border-box; width:min(1100px, 100%); margin:0 auto; padding:22px 24px; color:#f8fafc; background:#192235; border-bottom:3px solid #7ba7ff; font:18px/1.5 Arial,sans-serif; }
+      #html-game-launcher h1 { margin:0 0 8px; font-size:clamp(26px, 4vw, 36px); line-height:1.25; }
+      #html-game-launcher p { margin:0 0 16px; color:#ccd7eb; font-size:16px; }
+      #html-game-launcher .game-links { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+      #html-game-launcher a { box-sizing:border-box; display:flex; align-items:center; justify-content:center; min-height:76px; padding:16px; border:2px solid #85acff; border-radius:12px; color:#fff; background:#294c87; text-decoration:none; font-size:22px; font-weight:700; text-align:center; box-shadow:0 4px 12px #0004; }
+      #html-game-launcher a:hover { background:#3864aa; border-color:#fff; }
+      #html-game-launcher a:focus-visible { outline:4px solid #ffd166; outline-offset:3px; }
+      #unity-container.unity-desktop, #unity-container.unity-mobile { position:relative !important; left:auto !important; top:auto !important; transform:none !important; margin:20px auto 0; width:fit-content; max-width:100%; }
+      #unity-canvas { display:block; max-width:100%; }
+      #unity-container.unity-mobile { width:100%; }
+      #unity-canvas.unity-mobile { width:100%; height:calc(100dvh - 250px); min-height:260px; }
+      @media(max-width:600px) {
+        #html-game-launcher { padding:16px 12px; }
+        #html-game-launcher .game-links { grid-template-columns:1fr; gap:10px; }
+        #html-game-launcher a { min-height:60px; font-size:21px; padding:12px; }
+        #unity-canvas.unity-mobile { height:60dvh; }
+      }
+    </style>
+  </head>
   <body>
+    <nav id="html-game-launcher" aria-labelledby="html-games-title">
+      <h1 id="html-games-title">HTML Games / 게임 목록</h1>
+      <p>플레이할 게임을 선택하세요. 각 게임은 새 탭에서 열립니다. / Select a game. Opens in a new tab.</p>
+      <div class="game-links">
+        <a href="./Geometry_Bash_Menu_Tutorial_Text_Fix.html" target="_blank" rel="noopener noreferrer">Geometry Bash ↗</a>
+        <a href="./God_Intern_v08.html" target="_blank" rel="noopener noreferrer">God Intern ↗</a>
+        <a href="./steam-game-dev-v04.html" target="_blank" rel="noopener noreferrer">Steam Game Dev ↗</a>
+      </div>
+    </nav>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
@@ -98,7 +123,7 @@
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
 
-        var meta = document.createElement('meta');
+        var meta = document.querySelector('meta[name="viewport"]');
         meta.name = 'viewport';
         meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
         document.getElementsByTagName('head')[0].appendChild(meta);
@@ -171,9 +196,5 @@
       document.body.appendChild(script);
 
     </script>
-  <details id="html-game-launcher"><summary>HTML Games / 게임 목록</summary><nav aria-label="HTML games">
-<a href="Geometry_Bash_Menu_Tutorial_Text_Fix.html" target="_blank" rel="noopener noreferrer">Geometry Bash ↗</a>
-<a href="God_Intern_v08.html" target="_blank" rel="noopener noreferrer">God Intern ↗</a>
-<a href="steam-game-dev-v04.html" target="_blank" rel="noopener noreferrer">Steam Game Dev ↗</a>
-</nav></details></body>
+  </body>
 </html>
